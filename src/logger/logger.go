@@ -13,7 +13,7 @@ const USERNAME_ENV string = "MQTT_USERNAME"
 const PASSWORD_ENV string = "MQTT_PASSWORD"
 const IP_ENV string = "MQTT_BROKER_IP"
 const PORT_ENV string = "1883"
-const QUEUE_NAME string = "iot/logs"
+const LOG_QUEUE_NAME string = "iot/logs"
 
 func failOnError(err error, msg string) {
 	if err != nil {
@@ -39,12 +39,12 @@ func main() {
 	defer ch.Close()
 
 	queue, err := ch.QueueDeclare(
-		QUEUE_NAME, // name
-		false,      // durable
-		false,      // delete when unused
-		false,      // exclusive
-		false,      // no-wait
-		nil,        // arguments
+		LOG_QUEUE_NAME, // name
+		false,          // durable
+		false,          // delete when unused
+		false,          // exclusive
+		false,          // no-wait
+		nil,            // arguments
 	)
 	failOnError(err, "Failed to declare a queue")
 
