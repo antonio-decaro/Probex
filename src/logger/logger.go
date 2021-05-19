@@ -2,57 +2,71 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
-	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"github.com/nuclio/nuclio-sdk-go"
+	"github.com/joho/godotenv"
+	amqp "github.com/streadway/amqp"
 )
 
-const USERNAME_ENV string = "MQTT_USERNAME" // "guest"
-const PASSWORD_ENV string = "MQTT_PASSWORD" // "guest"
-const IP_ENV string = "MQTT_BROKER_IP"      // "192.168.1.20"
-const PORT_ENV string = "MQTT_PORT"         // "1883"
-const ID string = "go_mqtt_logger"
-const TOPIC string = "iot/mqtt/logger"
-const QOS byte = 0
+const USERNAME_ENV string = "MQTT_USERNAME"
+const PASSWORD_ENV string = "MQTT_PASSWORD"
+const IP_ENV string = "MQTT_BROKER_IP"
+const PORT_ENV string = "1883"
+const QUEUE_NAME string = "iot/logs"
 
-func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Fatalf("%s: %s", msg, err)
+	}
+}
+
+func main() {
+	err := godotenv.Load("../../.env")
+	failOnError(err, "Failed to read environment variables")
+
 	username := os.Getenv(USERNAME_ENV)
 	password := os.Getenv(PASSWORD_ENV)
 	ip := os.Getenv(IP_ENV)
 	port := os.Getenv(PORT_ENV)
 
-	body := string(event.GetBody())
-	context.Logger.Info(body)
+	conn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%s/", username, password, ip, port))
+	failOnError(err, "Failed to connect to RabbitMQ")
+	defer conn.Close()
 
-	client := getClient(
-		ID,
-		ip,
-		port,
-		username,
-		password,
+	ch, err := conn.Channel()
+	failOnError(err, "Failed to open a channel")
+	defer ch.Close()
+
+	queue, err := ch.QueueDeclare(
+		QUEUE_NAME, // name
+		false,      // durable
+		false,      // delete when unused
+		false,      // exclusive
+		false,      // no-wait
+		nil,        // arguments
 	)
+	failOnError(err, "Failed to declare a queue")
 
-	publish(client, QOS, TOPIC, body)
+	msgs, err := ch.Consume(
+		queue.Name, // queue
+		"",         // consumer
+		true,       // auto-ack
+		false,      // exclusive
+		false,      // no-local
+		false,      // no-wait
+		nil,        // args
+	)
+	failOnError(err, "Failed to register a consumer")
 
-	return nuclio.Response{}, nil
-}
+	forover := make(chan bool)
 
-func publish(client mqtt.Client, qos byte, topic string, data interface{}) {
-	token := client.Publish(topic, qos, false, data)
-	token.Wait()
-}
+	go func() {
+		for d := range msgs {
+			log.Printf("Published message: %s\n", d.Body)
+		}
+	}()
 
-func getClient(id, broker, port, username, password string) mqtt.Client {
-	opts := mqtt.NewClientOptions()
-	opts.AddBroker(fmt.Sprintf("tcp://%s:%s", broker, port))
-	opts.SetClientID(id)
-	opts.SetUsername(username)
-	opts.SetPassword(password)
-	client := mqtt.NewClient(opts)
-	if token := client.Connect(); token.Wait() && token.Error() != nil {
-		panic(token.Error())
-	}
-
-	return client
+	log.Println("[*] Waiting for messages. To exit press CTRL+C")
+	<-forover
 }
