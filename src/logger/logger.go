@@ -63,8 +63,7 @@ func main() {
 
 	go func() {
 		for d := range msgs {
-
-			log.Printf("[%d] %s\n", d.DeliveryTag, d.Body)
+			log.Println(d.Body)
 		}
 	}()
 

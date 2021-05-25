@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
+	"net/http"
 	"os"
 
 	"github.com/nuclio/nuclio-sdk-go"
@@ -22,32 +22,44 @@ type Logger struct {
 	queue amqp.Queue
 }
 
-func Handler(context nuclio.Context, event nuclio.Event) (interface{}, error) {
-	logger, err := InitLogger(context)
-	failOnError(err, context)
+type ProbeData struct {
+	Name        string
+	Distance    float32
+	Mass        int32
+	Radius      float32
+	Temperature float32
+	Water       bool
+}
+
+func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
+	logger, err := InitLogger()
+	if err != nil {
+		context.Logger.Error("Error: %s", err)
+		panic(err)
+	}
 	defer logger.Close()
 
 	// if we got the event from rabbit
-	if event.GetTriggerInfo().GetClass() == "async" && event.GetTriggerInfo().GetKind() == "rabbitMq" {
+	if event.GetTriggerInfo().GetClass() == "async" && event.GetTriggerInfo().GetKind() == "mqtt" {
 		body := event.GetBody()
 		logger.log("Body content: " + string(body))
 
-		var data map[string]interface{}
-		json.Unmarshal(body, &data)
+		var p ProbeData
+		json.Unmarshal(body, &p)
 
+		context.Logger.Info(p)
+		logger.log(fmt.Sprint(p))
+
+		return nil, nil
 	}
 
-	return nil, nil
+	return nuclio.Response{
+		StatusCode:  http.StatusOK,
+		ContentType: "application/json",
+	}, nil
 }
 
-func failOnError(err error, context nuclio.Context) {
-	if err != nil {
-		context.Logger.Error("Error: %s", err)
-		log.Fatal(err)
-	}
-}
-
-func InitLogger(context nuclio.Context) (*Logger, error) {
+func InitLogger() (*Logger, error) {
 	username := os.Getenv(USERNAME_ENV)
 	password := os.Getenv(PASSWORD_ENV)
 	ip := os.Getenv(IP_ENV)
