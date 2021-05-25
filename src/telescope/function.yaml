@@ -1,7 +1,7 @@
 apiVersion: "nuclio.io/v1"
 kind: NuclioFunction
 metadata:
-  name: probe-receiver
+  name: telescope-receiver
   namespace: nuclio
 spec:
   handler: "main:Handler"
