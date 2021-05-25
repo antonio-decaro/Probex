@@ -14,8 +14,8 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-# Module
 *.sum
 .vscode
 nuclio_run.sh
 nuctl
+.DS_Store
