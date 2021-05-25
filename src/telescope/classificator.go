@@ -7,6 +7,6 @@ func InitClassificator() (*Classificator, error) {
 	return new(Classificator), nil
 }
 
-func (Classificator) ClassifyData(data SpaceProbeData) bool {
+func (Classificator) ClassifyData(data TelescopeData) bool {
 	return true
 }

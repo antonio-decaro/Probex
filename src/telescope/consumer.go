@@ -41,7 +41,7 @@ func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
 		body := event.GetBody()
 		logger.Log("Body content: " + string(body))
 
-		var data SpaceProbeData
+		var data TelescopeData
 		json.Unmarshal(body, &data)
 
 		ch := make(chan error)
@@ -72,6 +72,6 @@ func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
 	}, nil
 }
 
-func sendPlanetProbe(data SpaceProbeData) error {
+func sendPlanetProbe(data TelescopeData) error {
 	return nil
 }
