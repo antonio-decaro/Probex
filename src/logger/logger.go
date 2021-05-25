@@ -63,7 +63,7 @@ func main() {
 
 	go func() {
 		for d := range msgs {
-			log.Println(d.Body)
+			log.Println(string(d.Body))
 		}
 	}()
 
