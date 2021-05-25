@@ -16,4 +16,6 @@
 
 # Module
 *.sum
-.env
+.vscode
+nuclio_run.sh
+nuctl
