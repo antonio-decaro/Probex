@@ -31,6 +31,12 @@ func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
 		panic(err)
 	}
 	defer logger.Close()
+	classificator, err := InitClassificator()
+	if err != nil {
+		logger.Log(err.Error())
+		context.Logger.Error("Error: %s", err)
+		panic(err)
+	}
 
 	// if we got the event from rabbit
 	if event.GetTriggerInfo().GetClass() == "async" && event.GetTriggerInfo().GetKind() == "mqtt" {
@@ -44,9 +50,8 @@ func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
 
 		go func(ch chan<- error) {
 			var err error
-			classificator := InitClassificator()
 			if classificator.ClassifyData(data) {
-				logger.Log(fmt.Sprintf("Planet %+v is potentially habiatble!", data))
+				logger.Log(fmt.Sprintf("Planet %+v is potentially habitable!", data))
 				err = sendPlanetProbe(data)
 			} else {
 				logger.Log(fmt.Sprintf("Planet %+v is not habitable", data))

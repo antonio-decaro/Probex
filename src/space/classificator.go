@@ -3,8 +3,8 @@ package main
 type Classificator struct {
 }
 
-func InitClassificator() *Classificator {
-	return new(Classificator)
+func InitClassificator() (*Classificator, error) {
+	return new(Classificator), nil
 }
 
 func (Classificator) ClassifyData(data SpaceProbeData) bool {
