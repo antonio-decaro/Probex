@@ -1,5 +1,5 @@
 package main
 
-func PersistProbeData(data SpaceProbeData) error {
+func PersistProbeData(data TelescopeData) error {
 	return nil
 }

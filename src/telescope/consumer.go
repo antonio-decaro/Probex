@@ -14,14 +14,12 @@ const IP_ENV string = "MQTT_BROKER_IP"
 const PORT_ENV string = "PORT_ENV"
 const LOG_QUEUE_NAME string = "iot/logs"
 
-type SpaceProbeData struct {
-	Name        string
-	Coordinate  [2]float64
-	Distance    float32
-	Mass        int32
-	Radius      float32
-	Temperature float32
-	Water       bool
+type TelescopeData struct {
+	Name       string
+	Coordinate [2]float64
+	Distance   float32
+	Mass       int32
+	Radius     float32
 }
 
 func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
