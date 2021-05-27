@@ -10,14 +10,11 @@ import (
 )
 
 type Persistence struct {
-	logger *Logger
-	svc    *dynamodb.DynamoDB
+	svc *dynamodb.DynamoDB
 }
 
-func InitPersistence(logger *Logger) (*Persistence, error) {
+func InitPersistence() (*Persistence, error) {
 	ret := new(Persistence)
-
-	ret.logger = logger
 
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
@@ -34,10 +31,8 @@ func (p *Persistence) PersistTelescopeData(data TelescopeData) error {
 
 	av, err := dynamodbattribute.MarshalMap(data)
 	if err != nil {
-		p.logger.Error("Got error marshaling new item: " + err.Error())
-		return err
+		return fmt.Errorf(fmt.Sprintf("got error marshaling new item: %s", err))
 	}
-	p.logger.Debug(fmt.Sprintf("%+v", av))
 
 	input := &dynamodb.PutItemInput{
 		Item:      av,
@@ -46,8 +41,7 @@ func (p *Persistence) PersistTelescopeData(data TelescopeData) error {
 
 	_, err = p.svc.PutItem(input)
 	if err != nil {
-		p.logger.Error("Got error calling PutItem: " + err.Error())
-		return err
+		return fmt.Errorf("got error calling PutItem: %s", err)
 	}
 
 	return nil

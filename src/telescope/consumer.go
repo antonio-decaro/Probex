@@ -31,7 +31,7 @@ func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
 		context.Logger.Error("Error: %s", err)
 		panic(err)
 	}
-	persistence, err := InitPersistence(logger)
+	persistence, err := InitPersistence()
 	if err != nil {
 		logger.Error(err.Error())
 		context.Logger.Error("Error: %s", err)
@@ -59,7 +59,12 @@ func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
 			ch <- err
 		}(ch)
 
-		persistence.PersistTelescopeData(data)
+		err := persistence.PersistTelescopeData(data)
+		if err != nil {
+			logger.Error(err.Error())
+		} else {
+			logger.Info("Planet successfully inserted in the database")
+		}
 
 		// waiting for classifying operation to complete
 		if err := <-ch; err != nil {
