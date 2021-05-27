@@ -51,10 +51,10 @@ func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
 		go func(ch chan<- error) {
 			var err error
 			if classificator.ClassifyData(data) {
-				logger.Info(fmt.Sprintf("Planet %+v is potentially habitable!", data))
+				logger.Info(fmt.Sprintf("Planet %+v is potentially habitable! Sending Probe...", data))
 				err = sendPlanetProbe(data)
 			} else {
-				logger.Info(fmt.Sprintf("Planet %+v is not habitable", data))
+				logger.Info(fmt.Sprintf("Planet %+v is not habitable.", data))
 			}
 			ch <- err
 		}(ch)
@@ -63,7 +63,7 @@ func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
 		if err != nil {
 			logger.Error(err.Error())
 		} else {
-			logger.Info("Planet successfully inserted in the database")
+			logger.Info("Planet successfully inserted in the database.")
 		}
 
 		// waiting for classifying operation to complete
