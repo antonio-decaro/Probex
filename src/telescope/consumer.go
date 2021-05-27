@@ -8,12 +8,6 @@ import (
 	"github.com/nuclio/nuclio-sdk-go"
 )
 
-const USERNAME_ENV string = "MQTT_USERNAME"
-const PASSWORD_ENV string = "MQTT_PASSWORD"
-const IP_ENV string = "MQTT_BROKER_IP"
-const PORT_ENV string = "PORT_ENV"
-const LOG_QUEUE_NAME string = "iot/logs"
-
 type TelescopeData struct {
 	Name         string
 	Coordinate   [2]float64
