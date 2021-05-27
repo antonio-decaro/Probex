@@ -15,11 +15,13 @@ const PORT_ENV string = "PORT_ENV"
 const LOG_QUEUE_NAME string = "iot/logs"
 
 type TelescopeData struct {
-	Name       string
-	Coordinate [2]float64
-	Distance   float32
-	Mass       int32
-	Radius     float32
+	Name         string
+	Coordinate   [2]float64
+	Distance     float32
+	StarDistance float32 // astronomic units
+	StarType     string
+	Mass         float32
+	Radius       float32
 }
 
 func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
@@ -31,7 +33,7 @@ func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
 	defer logger.Close()
 	classificator, err := InitClassificator()
 	if err != nil {
-		logger.Log(err.Error())
+		logger.Error(err.Error())
 		context.Logger.Error("Error: %s", err)
 		panic(err)
 	}
@@ -39,7 +41,7 @@ func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
 	// if we got the event from rabbit
 	if event.GetTriggerInfo().GetClass() == "async" && event.GetTriggerInfo().GetKind() == "mqtt" {
 		body := event.GetBody()
-		logger.Log("Body content: " + string(body))
+		logger.Debug("Body content: " + string(body))
 
 		var data TelescopeData
 		json.Unmarshal(body, &data)
@@ -49,10 +51,10 @@ func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
 		go func(ch chan<- error) {
 			var err error
 			if classificator.ClassifyData(data) {
-				logger.Log(fmt.Sprintf("Planet %+v is potentially habitable!", data))
+				logger.Info(fmt.Sprintf("Planet %+v is potentially habitable!", data))
 				err = sendPlanetProbe(data)
 			} else {
-				logger.Log(fmt.Sprintf("Planet %+v is not habitable", data))
+				logger.Info(fmt.Sprintf("Planet %+v is not habitable", data))
 			}
 			ch <- err
 		}(ch)
@@ -60,7 +62,9 @@ func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
 		PersistProbeData(data)
 
 		// waiting for classifying operation to complete
-		<-ch
+		if err := <-ch; err != nil {
+			logger.Error(err.Error())
+		}
 
 		return nil, nil
 	}

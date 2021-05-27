@@ -47,7 +47,7 @@ func InitLogger() (*Logger, error) {
 	return logger, nil
 }
 
-func (logger *Logger) Log(msg string) error {
+func (logger *Logger) log(msg string) error {
 	err := logger.ch.Publish(
 		"",                // exchange
 		logger.queue.Name, // routing key
@@ -59,6 +59,26 @@ func (logger *Logger) Log(msg string) error {
 		},
 	)
 	return err
+}
+
+func (logger *Logger) Info(msg string) error {
+	msg = "[INFO] " + msg
+	return logger.log(msg)
+}
+
+func (logger *Logger) Debug(msg string) error {
+	msg = "[DEBUG] " + msg
+	return logger.log(msg)
+}
+
+func (logger *Logger) Error(msg string) error {
+	msg = "[ERROR] " + msg
+	return logger.log(msg)
+}
+
+func (logger *Logger) Warning(msg string) error {
+	msg = "[WARNING] " + msg
+	return logger.log(msg)
 }
 
 func (logger *Logger) Close() {
