@@ -1,7 +1,7 @@
 apiVersion: "nuclio.io/v1"
 kind: NuclioFunction
 metadata:
-  name: telescope-receiver
+  name: probe-receiver
   namespace: nuclio
 spec:
   handler: "main:Handler"
@@ -31,4 +31,4 @@ spec:
       attributes:
         subscriptions:
           - qos: 1
-            topic: iot/telescope
+            topic: iot/probe
