@@ -3,13 +3,11 @@ package main
 import (
 	"net/http"
 
-	"logger"
-
 	"github.com/nuclio/nuclio-sdk-go"
 )
 
 func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
-	logger, err := logger.InitLogger()
+	logger, err := InitLogger()
 	if err != nil {
 		context.Logger.Error("Error: %s", err)
 		panic(err)

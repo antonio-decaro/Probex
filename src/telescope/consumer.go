@@ -31,6 +31,12 @@ func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
 		context.Logger.Error("Error: %s", err)
 		panic(err)
 	}
+	persistence, err := InitPersistence(logger)
+	if err != nil {
+		logger.Error(err.Error())
+		context.Logger.Error("Error: %s", err)
+		panic(err)
+	}
 
 	// if we got the event from rabbit
 	if event.GetTriggerInfo().GetClass() == "async" && event.GetTriggerInfo().GetKind() == "mqtt" {
@@ -53,7 +59,7 @@ func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
 			ch <- err
 		}(ch)
 
-		PersistProbeData(data)
+		persistence.PersistTelescopeData(data)
 
 		// waiting for classifying operation to complete
 		if err := <-ch; err != nil {
