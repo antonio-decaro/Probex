@@ -87,10 +87,10 @@ func sendPlanetProbe(data TelescopeData) error {
 	client := newMQTTClient("mqtt_probe_sender")
 	defer client.Disconnect(250)
 
-	msg := map[string]string{
+	msg := map[string]interface{}{
 		"Name":       data.Name,
-		"Coordinate": fmt.Sprintf("[%f, %f]", data.Coordinate[0], data.Coordinate[1]),
-		"Distance":   fmt.Sprintf("%f", data.Distance),
+		"Coordinate": data.Coordinate,
+		"Distance":   data.Distance,
 	}
 
 	send, err := json.Marshal(msg)
