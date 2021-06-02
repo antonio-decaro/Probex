@@ -82,5 +82,24 @@ func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
 }
 
 func sendPlanetProbe(data TelescopeData) error {
+	client := NewMQTTClient("mqtt_probe_sender")
+	defer client.Disconnect(250)
+
+	msg := map[string]string{
+		"Name":       data.Name,
+		"Coordinate": fmt.Sprintf("[%f, %f]", data.Coordinate[0], data.Coordinate[1]),
+		"Distance":   fmt.Sprintf("%f", data.Distance),
+	}
+
+	send, err := json.Marshal(msg)
+	if err != nil {
+		return err
+	}
+
+	token := client.Publish(PROBE_TOPIC_NAME, 1, false, send)
+	if !token.Wait() {
+		return fmt.Errorf("error sending the message")
+	}
+
 	return nil
 }
