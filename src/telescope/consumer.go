@@ -98,7 +98,7 @@ func sendPlanetProbe(data TelescopeData) error {
 		return err
 	}
 
-	token := client.Publish(PROBE_TOPIC_NAME, 1, false, send)
+	token := client.Publish(PROBE_TOPIC_NAME, 2, false, send)
 	if !token.Wait() {
 		return fmt.Errorf("error sending the message")
 	}
