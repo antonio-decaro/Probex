@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/nuclio/nuclio-sdk-go"
 )
 
@@ -82,7 +84,7 @@ func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
 }
 
 func sendPlanetProbe(data TelescopeData) error {
-	client := NewMQTTClient("mqtt_probe_sender")
+	client := newMQTTClient("mqtt_probe_sender")
 	defer client.Disconnect(250)
 
 	msg := map[string]string{
@@ -102,4 +104,24 @@ func sendPlanetProbe(data TelescopeData) error {
 	}
 
 	return nil
+}
+
+func newMQTTClient(id string) mqtt.Client {
+	opts := mqtt.NewClientOptions()
+
+	username := os.Getenv(USERNAME_ENV)
+	password := os.Getenv(PASSWORD_ENV)
+	ip := os.Getenv(IP_ENV)
+
+	opts.AddBroker(fmt.Sprintf("tcp://%s:1883", ip))
+	opts.SetClientID(id)
+	opts.SetUsername(username)
+	opts.SetPassword(password)
+
+	client := mqtt.NewClient(opts)
+	if token := client.Connect(); token.Wait() && token.Error() != nil {
+		panic(token.Error())
+	}
+
+	return client
 }
