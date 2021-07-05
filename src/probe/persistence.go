@@ -25,7 +25,7 @@ func InitPersistence() (*Persistence, error) {
 	return ret, nil
 }
 
-func (p *Persistence) PersistTelescopeData(data interface{}) error {
+func (p *Persistence) PersistProbeData(data interface{}) error {
 
 	tableName := "Planets"
 
