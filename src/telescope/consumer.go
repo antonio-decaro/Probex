@@ -13,11 +13,11 @@ import (
 type TelescopeData struct {
 	Name         string
 	Coordinate   [2]float64
-	Distance     float32
-	StarDistance float32 // astronomic units
+	Distance     float64
+	StarDistance float64 // astronomic units
 	StarType     string
-	Mass         float32
-	Radius       float32
+	Mass         float64
+	Radius       float64
 }
 
 func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {

@@ -31,4 +31,4 @@ spec:
       attributes:
         subscriptions:
           - qos: 1
-            topic: iot/probe
+            topic: iot/probe/receiver

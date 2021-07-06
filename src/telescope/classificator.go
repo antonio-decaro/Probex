@@ -12,7 +12,7 @@ func (Classificator) ClassifyData(data TelescopeData) bool { // THIS IS A MOCK C
 	const MAX_MASS = 2.0
 	const MIN_RADIUS = 0.80
 	const MAX_RADIUS = 3.9
-	var minDistance, maxDistance float32
+	var minDistance, maxDistance float64
 
 	switch data.StarType {
 	case "OBA":

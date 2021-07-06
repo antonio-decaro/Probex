@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 
-func startProbe(comm chan<- error) {
+func main() {
 	fmt.Println("[*] Starting Probe simulation device.")
+	defer fmt.Println("[.] Terminating Probe simulation device")
 }
