@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -15,18 +16,14 @@ const IP_ENV string = "MQTT_BROKER_IP"
 const PORT_ENV string = "PORT_ENV"
 const LOG_QUEUE_NAME string = "iot/monitor"
 
-var INFOS = []string{"Name"}
-
 var (
-	planetinfo []map[string]string
+	planetinfo []map[string]interface{}
+	headers    = []string{"Name"}
 )
 
 func main() {
-	forever := make(chan bool)
-
+	fmt.Println("[*] Starting monitor...")
 	startListening()
-
-	<-forever
 }
 
 func startListening() {
@@ -69,10 +66,12 @@ func startListening() {
 
 	go func() {
 		for d := range msgs {
-			msg := string(d.Body)
-			updateData(msg)
+			updateData(d.Body)
 		}
 	}()
+
+	forever := make(chan bool)
+	<-forever
 }
 
 func failOnError(err error, msg string) {
@@ -81,6 +80,15 @@ func failOnError(err error, msg string) {
 	}
 }
 
-func updateData(msg string) {
+func updateData(msg []byte) {
 
+	var data map[string]interface{}
+
+	err := json.Unmarshal(msg, &data)
+	if err == nil {
+		fmt.Printf("%+v\n", data)
+
+	} else {
+		fmt.Println(err)
+	}
 }

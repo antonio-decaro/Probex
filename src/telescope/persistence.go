@@ -51,9 +51,14 @@ func InitPersistence() (*Persistence, error) {
 func (p *Persistence) PersistTelescopeData(data TelescopeData) error {
 
 	msg := map[string]interface{}{
-		"Operation": "Telescope",
-		"Name":      data.Name,
-		//TODO
+		// "Operation": "Telescope",
+		"Name":         data.Name,
+		"Coordinate":   data.Coordinate,
+		"Distance":     data.Distance,
+		"StarDistance": data.StarDistance,
+		"StarType":     data.StarType,
+		"Mass":         data.Mass,
+		"Radius":       data.Radius,
 	}
 
 	jsonMsg, _ := json.Marshal(msg)
