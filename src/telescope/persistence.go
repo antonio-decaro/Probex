@@ -50,17 +50,7 @@ func InitPersistence() (*Persistence, error) {
 
 func (p *Persistence) PersistTelescopeData(data TelescopeData) error {
 
-	msg := map[string]interface{}{
-		"Name":         data.Name,
-		"Coordinate":   data.Coordinate,
-		"Distance":     data.Distance,
-		"StarDistance": data.StarDistance,
-		"StarType":     data.StarType,
-		"Mass":         data.Mass,
-		"Radius":       data.Radius,
-	}
-
-	jsonMsg, _ := json.Marshal(msg)
+	msg, _ := json.Marshal(data)
 
 	err := p.ch.Publish(
 		"",           // exchange
@@ -69,7 +59,7 @@ func (p *Persistence) PersistTelescopeData(data TelescopeData) error {
 		false,        // immediate
 		amqp.Publishing{
 			ContentType: "text/plain",
-			Body:        jsonMsg,
+			Body:        msg,
 		},
 	)
 	return err

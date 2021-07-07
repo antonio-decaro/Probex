@@ -50,14 +50,7 @@ func InitPersistence() (*Persistence, error) {
 
 func (p *Persistence) PersistProbeData(data ProbeData) error {
 
-	msg := map[string]interface{}{
-		"Name":        data.Name,
-		"Humidity":    data.Humidity,
-		"Temperature": data.Temperature,
-		"Wind":        data.Wind,
-	}
-
-	jsonMsg, _ := json.Marshal(msg)
+	msg, _ := json.Marshal(data)
 
 	err := p.ch.Publish(
 		"",           // exchange
@@ -66,7 +59,7 @@ func (p *Persistence) PersistProbeData(data ProbeData) error {
 		false,        // immediate
 		amqp.Publishing{
 			ContentType: "text/plain",
-			Body:        jsonMsg,
+			Body:        msg,
 		},
 	)
 	return err

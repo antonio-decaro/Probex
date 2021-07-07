@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	table "github.com/jedib0t/go-pretty/v6/table"
 	"github.com/joho/godotenv"
 	"github.com/streadway/amqp"
 )
@@ -18,11 +19,34 @@ const LOG_QUEUE_NAME string = "iot/monitor"
 
 var (
 	planetinfo []map[string]interface{}
-	headers    = []string{"Name"}
+	headers    = []string{
+		"Name",
+		"Coordinate",
+		"Distance",
+		"StarDistance",
+		"StarType",
+		"Mass",
+		"Radius",
+		"Humidity",
+		"Temperature",
+		"Wind",
+		"ProbeId",
+	}
+	writer table.Writer
 )
 
 func main() {
+	writer = table.NewWriter()
+	writer.SetOutputMirror(os.Stdout)
+	header := table.Row{"#"}
+	for _, h := range headers {
+		header = append(header, h)
+	}
+	writer.AppendHeader(header)
+	writer.SetStyle(table.StyleColoredBright)
+
 	fmt.Println("[*] Starting monitor...")
+	printData()
 	startListening()
 }
 
@@ -86,9 +110,46 @@ func updateData(msg []byte) {
 
 	err := json.Unmarshal(msg, &data)
 	if err == nil {
-		fmt.Printf("%+v\n", data)
+		// fmt.Printf("%+v\n", data)
+		found := false
+
+		for _, el := range planetinfo {
+			if el["Name"] == data["Name"] {
+				found = true
+				for key, val := range data {
+					el[key] = val
+				}
+				break
+			}
+		}
+
+		if !found {
+			planetinfo = append(planetinfo, data)
+		}
+
+		printData()
 
 	} else {
 		fmt.Println(err)
 	}
+}
+
+func printData() {
+
+	fmt.Print("\033[H\033[2J")
+	writer.ResetRows()
+
+	for i, el := range planetinfo {
+		row := table.Row{i}
+		for _, h := range headers {
+			if val, ok := el[h]; ok {
+				row = append(row, val)
+			} else {
+				row = append(row, "")
+			}
+		}
+		writer.AppendRow(row)
+	}
+
+	writer.Render()
 }

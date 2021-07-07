@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"sync/atomic"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 )
 
 type ProbeData struct {
+	ProbeId     uint64
 	Name        string
 	Humidity    float32
 	Temperature float32
@@ -69,7 +71,7 @@ func probe(client mqtt.Client, msg mqtt.Message) {
 	fmt.Printf("[*] Sending probe n %d on planet: %+v\n", id, data)
 
 	// TODO collezionare dati della sonda
-	planetData := collectPlanetData(data.Name)
+	planetData := collectPlanetData(data.Name, id)
 	jsonVal, _ := json.Marshal(planetData)
 
 	time.Sleep(3 * time.Second)
@@ -81,11 +83,16 @@ func probe(client mqtt.Client, msg mqtt.Message) {
 	}
 }
 
-func collectPlanetData(name string) *ProbeData {
+func collectPlanetData(name string, id uint64) *ProbeData {
+
+	seed := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(seed)
+
 	return &ProbeData{
+		ProbeId:     id,
 		Name:        name,
-		Humidity:    4, // random
-		Temperature: 3, // random
-		Wind:        1, // random
+		Humidity:    r.Float32() + float32(r.Intn(10)),
+		Temperature: r.Float32() + float32(r.Intn(10)),
+		Wind:        r.Float32() + float32(r.Intn(10)),
 	}
 }
