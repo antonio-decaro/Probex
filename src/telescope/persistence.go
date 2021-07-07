@@ -1,48 +1,72 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/streadway/amqp"
 )
 
 type Persistence struct {
-	svc *dynamodb.DynamoDB
+	conn  *amqp.Connection
+	ch    *amqp.Channel
+	queue amqp.Queue
 }
 
 func InitPersistence() (*Persistence, error) {
+	username := os.Getenv(USERNAME_ENV)
+	password := os.Getenv(PASSWORD_ENV)
+	ip := os.Getenv(IP_ENV)
+	port := os.Getenv(PORT_ENV)
+
 	ret := new(Persistence)
 
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}))
+	var err error
+	ret.conn, err = amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%s/", username, password, ip, port))
+	if err != nil {
+		return ret, err
+	}
 
-	ret.svc = dynamodb.New(sess)
+	ret.ch, err = ret.conn.Channel()
+	if err != nil {
+		return ret, err
+	}
+
+	ret.queue, err = ret.ch.QueueDeclare(
+		MONITOR_QUEUE_NAME, // name
+		false,              // durable
+		false,              // delete when unused
+		false,              // exclusive
+		false,              // no-wait
+		nil,                // arguments
+	)
+	if err != nil {
+		return ret, err
+	}
 
 	return ret, nil
 }
 
-func (p *Persistence) PersistTelescopeData(data interface{}) error {
+func (p *Persistence) PersistTelescopeData(data TelescopeData) error {
 
-	tableName := "Planets"
-
-	av, err := dynamodbattribute.MarshalMap(data)
-	if err != nil {
-		return fmt.Errorf(fmt.Sprintf("got error marshaling new item: %s", err))
+	msg := map[string]interface{}{
+		"Operation": "Telescope",
+		"Name":      data.Name,
+		//TODO
 	}
 
-	input := &dynamodb.PutItemInput{
-		Item:      av,
-		TableName: aws.String(tableName),
-	}
+	jsonMsg, _ := json.Marshal(msg)
 
-	_, err = p.svc.PutItem(input)
-	if err != nil {
-		return fmt.Errorf("got error calling PutItem: %s", err)
-	}
-
-	return nil
+	err := p.ch.Publish(
+		"",           // exchange
+		p.queue.Name, // routing key
+		false,        // mandatory
+		false,        // immediate
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        jsonMsg,
+		},
+	)
+	return err
 }

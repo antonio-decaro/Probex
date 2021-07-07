@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sync/atomic"
+	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
@@ -70,6 +71,8 @@ func probe(client mqtt.Client, msg mqtt.Message) {
 	// TODO collezionare dati della sonda
 	planetData := collectPlanetData(data.Name)
 	jsonVal, _ := json.Marshal(planetData)
+
+	time.Sleep(3 * time.Second)
 
 	fmt.Printf("[*] Probe %d retrived those information about the planet %s: %s\n", id, data.Name, string(jsonVal))
 
