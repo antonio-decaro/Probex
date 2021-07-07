@@ -25,7 +25,7 @@ func InitPersistence() (*Persistence, error) {
 	return ret, nil
 }
 
-func (p *Persistence) PersistProbeData(data interface{}) error {
+func (p *Persistence) PersistProbeData(data ProbeData) error {
 
 	tableName := "Planets"
 
@@ -34,12 +34,22 @@ func (p *Persistence) PersistProbeData(data interface{}) error {
 		return fmt.Errorf(fmt.Sprintf("got error marshaling new item: %s", err))
 	}
 
-	input := &dynamodb.PutItemInput{
-		Item:      av,
+	input := &dynamodb.UpdateItemInput{
+		Key: map[string]*dynamodb.AttributeValue{
+			"Name": {
+				S: aws.String(data.Name),
+			},
+		},
 		TableName: aws.String(tableName),
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":h": av["Humidity"],
+			":w": av["Wind"],
+			":t": av["Temperature"],
+		},
+		UpdateExpression: aws.String("add Humidity = :r, Wind = :w, Temperature = :t"),
 	}
 
-	_, err = p.svc.PutItem(input)
+	_, err = p.svc.UpdateItem(input)
 	if err != nil {
 		return fmt.Errorf("got error calling PutItem: %s", err)
 	}

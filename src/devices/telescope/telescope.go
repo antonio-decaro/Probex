@@ -51,7 +51,7 @@ func main() {
 	data.Radius, _ = strconv.ParseFloat(mass, 64)
 
 	stream, _ := json.Marshal(data)
-	fmt.Printf("[*] Found a Planet with those specs: %+v\n", stream)
+	fmt.Printf("[*] Found a Planet with those specs: %s\n", string(stream))
 
 	sendData(data)
 	fmt.Printf("[.] Data sent")
