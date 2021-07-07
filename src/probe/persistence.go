@@ -51,7 +51,6 @@ func InitPersistence() (*Persistence, error) {
 func (p *Persistence) PersistProbeData(data ProbeData) error {
 
 	msg := map[string]interface{}{
-		// "Operation":   "Probe",
 		"Name":        data.Name,
 		"Humidity":    data.Humidity,
 		"Temperature": data.Temperature,

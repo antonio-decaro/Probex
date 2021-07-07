@@ -51,7 +51,6 @@ func InitPersistence() (*Persistence, error) {
 func (p *Persistence) PersistTelescopeData(data TelescopeData) error {
 
 	msg := map[string]interface{}{
-		// "Operation": "Telescope",
 		"Name":         data.Name,
 		"Coordinate":   data.Coordinate,
 		"Distance":     data.Distance,
