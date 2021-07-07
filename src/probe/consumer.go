@@ -13,6 +13,7 @@ type ProbeData struct {
 	Humidity    float32
 	Temperature float32
 	Wind        float32
+	ProbeId     uint64
 }
 
 func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
