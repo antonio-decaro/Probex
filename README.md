@@ -1,11 +1,3 @@
-# sciot-project
+# ProbeX
 
-Questo progetto riguarda l'esplorazione spaziale.
-
-Una sonda mandata nello spazio spedisce informazioni riguardo un esopianeta.
-Una funzione serverless analizza il contenuto del messaggio e determina se quel pianeta è abitabile o meno.
-Il pianeta viene inserito in un dataset, specificando quanto è distante e se è abitabile.
-Un web site mostra tutte le informazioni raccolte dalle sonde.
-
-Caratteristiche abitabilità di un pianeta:
-    - 
+Nowadays space exploration is limited by technology and physics. Imagine finding yourself in a future where space travel is much easier. The goal of this project is to exploit serverless computing in order to find potentially habitable planets. A telescope will be in charge of spotting planets with characteristics similar to those of the earth, meanwhile a probe will be sent on that planet to obtain more accurate informations.
