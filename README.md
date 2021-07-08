@@ -139,7 +139,7 @@ In each files replace this strings with you valid parameter
 
 ------------------------------------------------------------------------------------------------------------------------------
 
-###Update and deploy Functions**:
+### Update and deploy Functions:
 - Type '**localhost:8070**' on your browser to open the homepage of Nuclio
 - Create new project
 - Press '**Create function**', '**Import**' and upload the two functions that are in the **yaml_functions** folder
