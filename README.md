@@ -23,7 +23,7 @@ In the following sections will be explained how to achive the goal, which are th
 
 # Architecture
 
-![architecture.png](img/architecture.png)
+<img src="img/architecture.png" alt="architecture"/>
 
 # Project Structure
 
