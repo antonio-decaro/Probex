@@ -9,11 +9,17 @@ import (
 )
 
 type ProbeData struct {
-	Name        string
-	Humidity    float32
-	Temperature float32
-	Wind        float32
-	ProbeId     uint64
+	Name         string
+	Coordinate   [2]float64
+	Distance     float64
+	StarDistance float64 // astronomic units
+	StarType     string
+	Mass         float64
+	Radius       float64
+	Humidity     float32
+	Temperature  float32
+	Wind         float32
+	ProbeId      uint64
 }
 
 func Handler(context *nuclio.Context, event nuclio.Event) (interface{}, error) {
