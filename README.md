@@ -8,12 +8,13 @@ Nowadays space exploration is limited by technology and physics. Imagine finding
 
 # Summary
 
-[- Introduction](#Introduction)\
-[- Architecture](#Architecture)\
-[- Project structure](#Project-structure)\
-[- Getting started](#Getting-started)
+[> Introduction](#Introduction)\
+[> Architecture](#Architecture)\
+[> Project structure](#Project-structure)\
+[> Getting started](#Getting-started)
 
 # Introduction
+
 
 # Architecture
 
