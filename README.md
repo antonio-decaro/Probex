@@ -124,7 +124,7 @@ $ docker run -p 9000:15672  -p 1883:1883 -p 5672:5672  cyrilix/rabbitmq-mqtt
 Browse to http://localhost:9000. The default username is ***guest***, and the password is ***guest***
 
 ------------------------------------------------------------------------------------------------------------------------------
-### Node.JS
+### Go
 The project core is realized in go, then that is how to install it: <br>
 Download [Go](https://golang.org/dl/), and follow the installation informations.
 
