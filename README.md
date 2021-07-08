@@ -19,7 +19,7 @@ This project has been realized for the Serverless Computing for IoT class at "Un
 
 ProbeX takes place in a future in which interstellar travels are possible. The goal of the project is to discover potentially habitable planets exploiting the Serverless computing.
 
-In the following sections will be explained how to achive the goal, which are the main technologies involved in this project and 
+In the following sections will be explained how to achive the goal, which are the main technologies involved in this project and will be discussed all the solution design decisions.
 
 # Architecture
 
