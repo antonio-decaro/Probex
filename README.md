@@ -68,3 +68,81 @@ In this section will be explained all choises regarding the protocol choosed for
 - **.env**: contains the environment variables;
 
 # Getting Started
+
+### Docker
+Install [Docker](https://www.docker.com) using the Docker CE installation [guide](https://docs.docker.com/install/linux/docker-ce/ubuntu/#extra-steps-for-aufs).
+
+```sh
+$ sudo apt-get update
+$ sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+$ echo \
+  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+$ sudo apt-get update
+$ sudo apt-get install docker-ce
+```
+
+------------------------------------------------------------------------------------------------------------------------------
+
+### Docker Compose
+
+Install Docker Compose using the Docker Compose installation [guide](https://docs.docker.com/compose/install/#install-compose).
+
+```sh
+$ sudo curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+$ sudo chmod +x /usr/local/bin/docker-compose
+```
+
+----------------------------------------------------------------------------------------------------------------------------
+
+
+### Nuclio 
+Start [Nuclio](https://github.com/nuclio/nuclio) using a docker container.
+
+```sh
+$ docker run -p 8070:8070 -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/tmp nuclio/dashboard:stable-amd64
+```
+
+Browse to http://localhost:8070.
+
+----------------------------------------------------------------------------------------------------------------------------
+
+### RabbitMQ 
+
+Start [RabbitMQ](https://www.rabbitmq.com) instance with MQTT enabled using docker.
+
+```sh
+$ docker run -p 9000:15672  -p 1883:1883 -p 5672:5672  cyrilix/rabbitmq-mqtt 
+```
+
+Browse to http://localhost:9000. The default username is ***guest***, and the password is ***guest***
+
+------------------------------------------------------------------------------------------------------------------------------
+### Node.JS
+The project core is realized in go, then that is how to install it: <br>
+Download [Go](https://golang.org/dl/), and follow the installation informations.
+
+### Parameters
+In each files replace this strings with you valid parameter
+* ***MQTT_USERNAME*** the username to log-in on RabbitMQ
+* ***MQTT_PASSWORD*** the password to log-in on RabbitMQ
+* ***MQTT_BROKER_IP*** the ip address of the broker RabbitMQ
+* ***PORT_ENVP*** the TCP port of the broker RabbitMQ
+
+***⚠️:*** files you have to modity are `.env` file and all `.yaml` files
+
+------------------------------------------------------------------------------------------------------------------------------
+
+- **Update and deploy Functions**:
+- Type '**localhost:8070**' on your browser to open the homepage of Nuclio
+- Create new project
+- Press '**Create function**', '**Import**' and upload the two functions that are in the **yaml_functions** folder
+- In both, **change the already present [parameters](#parameters) with yours**\
+**⚠️Do not forget the trigger⚠️**
+- Press **'Deploy'**.
