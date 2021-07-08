@@ -62,6 +62,7 @@ func probe(client mqtt.Client, msg mqtt.Message) {
 	id := atomic.AddUint64(&probeid, 1)
 
 	var data ProbeData
+	data.ProbeId = id
 	err := json.Unmarshal(msg.Payload(), &data)
 	if err != nil {
 		fmt.Printf("[ERROR] Payload: %s\n", string(msg.Payload()))
@@ -71,7 +72,7 @@ func probe(client mqtt.Client, msg mqtt.Message) {
 	fmt.Printf("[*] Sending probe n %d on planet: %+v\n", id, data)
 	time.Sleep(3 * time.Second)
 
-	collectPlanetData(&data, id)
+	collectPlanetData(&data)
 	send, _ := json.Marshal(data)
 
 	fmt.Printf("[*] Probe %d retrived those information about the planet %s: %s\n", id, data.Name, string(send))
@@ -81,7 +82,7 @@ func probe(client mqtt.Client, msg mqtt.Message) {
 	}
 }
 
-func collectPlanetData(data *ProbeData, id uint64) {
+func collectPlanetData(data *ProbeData) {
 
 	seed := rand.NewSource(time.Now().UnixNano())
 	r := rand.New(seed)
