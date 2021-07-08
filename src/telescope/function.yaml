@@ -36,5 +36,5 @@ spec:
       password: guest
       attributes:
         subscriptions:
-          - qos: 1
+          - qos: 2
             topic: iot/telescope
