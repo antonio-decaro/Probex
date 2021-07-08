@@ -15,6 +15,7 @@ Nowadays space exploration is limited by technology and physics. Imagine finding
 
 # Introduction
 
+ProbeX takes place in a future in which interstellar travels are possible. The goal of the project is to discover potentially habitable planets exploiting the Serverless computing.
 
 # Architecture
 
