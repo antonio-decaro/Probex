@@ -6,17 +6,17 @@ Nowadays space exploration is limited by technology and physics. Imagine finding
 
 -----
 
-## Summary
+# Summary
 
 [- Introduction](#Introduction): brief introduction to the problem\
 [- Architecture](#Architecture): architecture of the idea\
 [- Project structure](#Project-structure): how the project is organized\
 [- Getting started](#Getting-started): guide to run the project
 
-## Introduction
+# Introduction
 
-## Architecture
+# Architecture
 
-## Project Structure
+# Project Structure
 
-## Getting Started
+# Getting Started
