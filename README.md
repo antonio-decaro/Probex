@@ -36,7 +36,7 @@ The probe dock catches that message and sends a probe on that planet. Each probe
 
 An handler called *probe-receiver* will gain those informations on that topic, updating the *Monitor* status with all new informations catched by the probe.
 
-Eather *telescope-receiver* or *probe-receiver* logs on a logger, comunicating with the AMPQ protocol.
+Eather *telescope-receiver* or *probe-receiver* are implemented on *Nuclio*.
 
 ### QoS and Protocols
 
@@ -47,5 +47,24 @@ In this section will be explained all choises regarding the protocol choosed for
 * **Monitor and Logger**: The monitor and the logger will communicate directly with the AMPQ protocol. Thats why a dedicated computer will be used as monitor and logger.
 
 # Project Structure
+
+- **devices**: contains the implementation of the simultated devices;
+  - *probe.go*: the simulation device for the Probe Dock;
+  - *telescope.go*: the simulation device for the Telescope;
+- **probe**: defines the behaviour of **probe-receiver**;
+  - *constants.go*: defines constants for the **probe-receiver**;
+  - *consumer.go*: in this file is specified the function that will be executed on nuclio;
+  - *logger.go*: contains all the utilities for logging on AMQP;
+  - *persistence.go*: this file defines the communication of the probe-receiver with the monitor;
+  - *function.yaml*: contains all the deploying informations of the function on nuclio;
+- **telescope**: defines the behaviour of **telescope-receiver**;
+  - *constants.go*: defines constants for the **probe-receiver**;
+  - *consumer.go*: in this file is specified the function that will be executed on nuclio;
+  - *logger.go*: contains all the utilities for logging on AMQP;
+  - *classificator.go*: the mock classificator is defined in this file;
+  - *function.yaml*: contains all the deploying informations of the function on nuclio;
+- **monitor**: contains the implementation of the AMPQ monitor;
+- **logging**: contains the implementation of the AMPQ logger;
+- **.env**: contains the environment variables;
 
 # Getting Started
