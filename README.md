@@ -43,7 +43,7 @@ Eather *telescope-receiver* or *probe-receiver* are implemented on *Nuclio*.
 In this section will be explained all choises regarding the protocol choosed for each device, and the corrispective QoS (Quality of Service).
 
 * **Telescope**: Since a Telescope is a powerful IoT device, the QoS is 2. Thats why it needs a reliable communication with the probe dock, otherwise more than one probe will be sent on the same planet.
-* **Probe**: A probe will start to send information when it will arrive on the planet. The probe sends continous information, so we just need to guarantee that at least one message will arrive on our planet. That's why we just need QoS 1.
+* **Probe**: A probe will start to send information when it will arrive on the planet. The probe sends continous information, so we just need QoS 1.
 * **Monitor and Logger**: The monitor and the logger will communicate directly with the AMQP protocol. Thats why a dedicated computer will be used as monitor and logger.
 
 # Project Structure
