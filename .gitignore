@@ -19,4 +19,4 @@
 nuclio_run.sh
 nuctl
 .DS_Store
-src/monitor/monitor.go
+src/monitor/monitor.dat
