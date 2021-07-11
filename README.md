@@ -25,7 +25,7 @@ In the following sections will be explained how to achive the goal, which are th
 
 <img src="img/architecture.png" alt="architecture"/>
 
-ProbeX uses MQTT and AMPQ to keep in comunication all involved devices.
+ProbeX uses MQTT and AMQP to keep in comunication all involved devices.
 
 The project structure is composed by two main devices: the telescope, and the probe dock, each with a custom MQTT topic on which send messages.
 When the Telescope finds a new planet, it sends a message on the MQTT topic *iot/telescope*. The handler *telescope-receiver* catch all telescope messages and finds out if the planet respects the habitability characteristics of the planet using a classifier (the current implementation of the classifier is just a mock).
@@ -44,7 +44,7 @@ In this section will be explained all choises regarding the protocol choosed for
 
 * **Telescope**: Since a Telescope is a powerful IoT device, the QoS is 2. Thats why it needs a reliable communication with the probe dock, otherwise more than one probe will be sent on the same planet.
 * **Probe**: A probe will start to send information when it will arrive on the planet. The probe sends continous information, so we just need to guarantee that at least one message will arrive on our planet. That's why we just need QoS 1.
-* **Monitor and Logger**: The monitor and the logger will communicate directly with the AMPQ protocol. Thats why a dedicated computer will be used as monitor and logger.
+* **Monitor and Logger**: The monitor and the logger will communicate directly with the AMQP protocol. Thats why a dedicated computer will be used as monitor and logger.
 
 # Project Structure
 
@@ -63,8 +63,8 @@ In this section will be explained all choises regarding the protocol choosed for
   - *logger.go*: contains all the utilities for logging on AMQP;
   - *classificator.go*: the mock classificator is defined in this file;
   - *function.yaml*: contains all the deploying informations of the function on nuclio;
-- **monitor**: contains the implementation of the AMPQ monitor;
-- **logging**: contains the implementation of the AMPQ logger;
+- **monitor**: contains the implementation of the AMQP monitor;
+- **logging**: contains the implementation of the AMQP logger;
 - **.env**: contains the environment variables;
 
 # Getting Started
