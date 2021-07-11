@@ -3,8 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
 
 	table "github.com/jedib0t/go-pretty/v6/table"
 	"github.com/joho/godotenv"
@@ -16,6 +19,7 @@ const PASSWORD_ENV string = "MQTT_PASSWORD"
 const IP_ENV string = "MQTT_BROKER_IP"
 const PORT_ENV string = "PORT_ENV"
 const LOG_QUEUE_NAME string = "iot/monitor"
+const FNAME string = "./monitor.dat"
 
 var (
 	planetinfo []map[string]interface{}
@@ -42,8 +46,20 @@ func main() {
 	for _, h := range headers {
 		header = append(header, h)
 	}
+
 	writer.AppendHeader(header)
 	writer.SetStyle(table.StyleColoredBright)
+
+	loadData()
+
+	// to save the file on exit
+	ctrlc := make(chan os.Signal)
+	signal.Notify(ctrlc, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-ctrlc
+		saveData()
+		os.Exit(0)
+	}()
 
 	fmt.Println("[*] Starting monitor...")
 	printData()
@@ -128,6 +144,7 @@ func updateData(msg []byte) {
 		}
 
 		printData()
+		saveData()
 
 	} else {
 		fmt.Println(err)
@@ -152,4 +169,26 @@ func printData() {
 	}
 
 	writer.Render()
+}
+
+func loadData() {
+	data, err := ioutil.ReadFile(FNAME)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	json.Unmarshal(data, &planetinfo)
+}
+
+func saveData() {
+	data, err := json.Marshal(planetinfo)
+	if err != nil {
+		panic(err)
+	}
+
+	err = ioutil.WriteFile(FNAME, data, 0777)
+	if err != nil {
+		panic(err)
+	}
 }
