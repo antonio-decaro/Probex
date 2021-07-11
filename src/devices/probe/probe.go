@@ -71,14 +71,18 @@ func probe(client mqtt.Client, msg mqtt.Message) {
 
 	fmt.Printf("[*] Sending probe n %d on planet: %+v\n", id, data)
 	time.Sleep(3 * time.Second)
+	fmt.Printf("[*] Probe %d arrived on planet %s\n", id, data.Name)
 
-	collectPlanetData(&data)
-	send, _ := json.Marshal(data)
+	for {
+		collectPlanetData(&data)
+		send, _ := json.Marshal(data)
 
-	fmt.Printf("[*] Probe %d retrived those information about the planet %s: %s\n", id, data.Name, string(send))
+		fmt.Printf("[*] Probe %d retrived those information about the planet %s: %s\n", id, data.Name, string(send))
 
-	if token := client.Publish("iot/probe/receiver", 1, false, send); token.Wait() && token.Error() != nil {
-		fmt.Printf("[ERROR] %s\n", token.Error())
+		if token := client.Publish("iot/probe/receiver", 0, false, send); token.Wait() && token.Error() != nil {
+			fmt.Printf("[ERROR] %s\n", token.Error())
+		}
+		time.Sleep(30 * time.Second)
 	}
 }
 

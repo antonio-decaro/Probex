@@ -30,5 +30,5 @@ spec:
       password: guest
       attributes:
         subscriptions:
-          - qos: 1
+          - qos: 0
             topic: iot/probe/receiver
