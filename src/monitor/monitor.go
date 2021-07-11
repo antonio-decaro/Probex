@@ -57,6 +57,7 @@ func main() {
 	signal.Notify(ctrlc, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-ctrlc
+		fmt.Println("[*] Saving data and exiting.")
 		saveData()
 		os.Exit(0)
 	}()
